@@ -10,6 +10,7 @@ class GameState:
         self.pile = []
         self.player_hand = []
         self.comp_hand = []
+        self.turn = 'player'
     
 
     def initiate_cards(self):
@@ -23,23 +24,30 @@ class GameState:
         
         # Deze kaarten moeten 4 keer toegevoegd worden
         self.cards.extend(['black_+4', 'black_wildcard'] * 4)
-        
-        print(self.cards)
 
 
     def distribute_cards(self):
         for _ in range(self.cards_per_player):
-            random_card = random.choice(self.cards)
-            self.player_hand.append(random_card)
-            self.cards.remove(random_card)
-
-            random_card = random.choice(self.cards)
-            self.comp_hand.append(random_card)
-            self.cards.remove(random_card)
-
-        print(self.player_hand)
-        print(self.comp_hand)
+            self.player_hand.append(self.cards.pop(random.randint(0, len(self.cards) - 1)))
+            self.comp_hand.append(self.cards.pop(random.randint(0, len(self.cards) - 1)))
+            
+        self.pile.append(self.cards.pop(random.randint(0, len(self.cards) - 1)))
 
 
-    def play_card(self):
+    def play_card(self, card):
+        if self.turn == 'player':
+            self.player_hand.remove(card)
+        else:
+            self.comp_hand.remove(card)
+        self.pile.append(card)
+
+
+    def take_card(self):
+        if self.turn == 'player':
+            self.player_hand.append(self.cards(random.randint(0, len(self.cards) - 1)))
+        else:
+            self.comp_hand.append(self.cards.pop(random.randint(0, len(self.cards) - 1)))
+
+    def valid_move(self, card):
         pass
+    
