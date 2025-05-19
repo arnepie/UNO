@@ -31,14 +31,29 @@ def draw_cards(images):
     
     for i, card in enumerate(GameState.player_hand):
         if images.get(card):
-            x_pos = 50 + (50 * i)
+            x_pos = 100 + (100 * i)
             screen.blit(images.get(card), (x_pos, 750))
     
     for i in range(len(GameState.comp_hand)):
         if images.get('back'):
-            x_pos = 50 + (50 * i)
+            x_pos = 100 + (100 * i)
             screen.blit(images.get('back'), (x_pos, 150))
 
+
+    pygame.display.flip()
+
+
+def draw_color_choosing_screen():
+    my_rectangle = pygame.Rect(400, 400, 200, 200)
+    pygame.draw.rect(screen, (255, 255, 255 ), my_rectangle)
+    blue_rectangle = pygame.Rect(100,100,50,50)
+    pygame.draw.rect(screen,(0,0,255), blue_rectangle )
+    green_rectangle = pygame.Rect(100,100,50,50)
+    pygame.draw.rect(screen,(0,128,0), green_rectangle)
+    red_rectangle = pygame.Rect(100,100,50,50)
+    pygame.draw.rect(screen,(255,0,0), red_rectangle)
+    yellow_rectangle = pygame.Rect(100,100,50,50)
+    pygame.draw.rect(screen,(255,255,0), yellow_rectangle)
 
     pygame.display.flip()
 
@@ -58,11 +73,31 @@ def main():
     draw_cards(images)
 
     while running:
+        print(GameState.choose_card)
+        if GameState.choose_card == True:
+            draw_color_choosing_screen()
+
+        if GameState.turn == 'comp':
+            pygame.time.delay(1000)
+            GameState.play_comp_move()
+            draw_screen()
+            draw_cards(images)
 
         for event in pygame.event.get():
 
             if event.type == pygame.QUIT:
                 running = False
+
+            if event.type == pygame.MOUSEBUTTONDOWN and GameState.turn == 'player':
+                x, y = pygame.mouse.get_pos()
+
+                index = (x - 100) // 100
+                if 0 <= index < len(GameState.player_hand):
+                    selected_card = GameState.player_hand[index]
+                    GameState.play_card(selected_card)
+                    draw_screen()
+                    draw_cards(images)
+                    
 
 
 main()
