@@ -1,53 +1,103 @@
-import random
+import pygame
+import GameState
 
-class GameState:
-    def __init__(self):
-        self.cards = []
-        self.colors = ['red', 'green', 'blue', 'yellow']
-        self.ranks = [i for i in range(1, 10)] + ['+2', 'skip', 'reverse']
-        self.cards_per_player = 7
+GameState = GameState.GameState()
+screen = pygame.display.set_mode((1500, 1000))
+pygame.display.set_caption("UNO")
 
-        self.pile = []
-        self.player_hand = []
-        self.comp_hand = []
-        self.turn = 'player'
+
+def draw_screen():
+    background_colour = (255,0,0)
+    screen.fill(background_colour)
+   
+    pygame.display.flip()
+
+
+def load_images(cards):
+    images = {}
+
+    for card in cards:
+        images[card] = pygame.image.load("images\\" + card + ".png")
+    images['back'] = pygame.image.load("images\\back.png")
+
+    return images
+
+
+def draw_cards(images):
+    screen.blit(images.get('back'), (500, 400))
+
+    if GameState.pile:
+        screen.blit(images.get(GameState.pile[-1]), (600, 400))
     
-
-    def initiate_cards(self):
-        for color in self.colors:
-            for rank in self.ranks:
-                self.cards.append(f'{color}_{rank}')
-
-                # Deze kaarten moeten 2 keer toegevoegd worden
-                if rank in ['+2', 'skip', 'reverse']:
-                    self.cards.append(f'{color}_{rank}')
-        
-        # Deze kaarten moeten 4 keer toegevoegd worden
-        self.cards.extend(['black_+4', 'black_wildcard'] * 4)
-
-
-    def distribute_cards(self):
-        for _ in range(self.cards_per_player):
-            self.player_hand.append(self.cards.pop(random.randint(0, len(self.cards) - 1)))
-            self.comp_hand.append(self.cards.pop(random.randint(0, len(self.cards) - 1)))
-            
-        self.pile.append(self.cards.pop(random.randint(0, len(self.cards) - 1)))
-
-
-    def play_card(self, card):
-        if self.turn == 'player':
-            self.player_hand.remove(card)
-        else:
-            self.comp_hand.remove(card)
-        self.pile.append(card)
-
-
-    def take_card(self):
-        if self.turn == 'player':
-            self.player_hand.append(self.cards(random.randint(0, len(self.cards) - 1)))
-        else:
-            self.comp_hand.append(self.cards.pop(random.randint(0, len(self.cards) - 1)))
-
-    def valid_move(self, card):
-        pass
+    for i, card in enumerate(GameState.player_hand):
+        if images.get(card):
+            x_pos = 100 + (100 * i)
+            screen.blit(images.get(card), (x_pos, 750))
     
+    for i in range(len(GameState.comp_hand)):
+        if images.get('back'):
+            x_pos = 100 + (100 * i)
+            screen.blit(images.get('back'), (x_pos, 150))
+
+
+    pygame.display.flip()
+
+
+def draw_color_choosing_screen():
+    my_rectangle = pygame.Rect(400, 400, 200, 200)
+    pygame.draw.rect(screen, (255, 255, 255 ), my_rectangle)
+    blue_rectangle = pygame.Rect(100,100,50,50)
+    pygame.draw.rect(screen,(0,0,255), blue_rectangle )
+    green_rectangle = pygame.Rect(100,100,50,50)
+    pygame.draw.rect(screen,(0,128,0), green_rectangle)
+    red_rectangle = pygame.Rect(100,100,50,50)
+    pygame.draw.rect(screen,(255,0,0), red_rectangle)
+    yellow_rectangle = pygame.Rect(100,100,50,50)
+    pygame.draw.rect(screen,(255,255,0), yellow_rectangle)
+
+    pygame.display.flip()
+
+
+def draw_winning_screen(winner):
+    pass
+
+
+def main():
+    running = True
+
+    GameState.initiate_cards()
+    images = load_images(GameState.cards)
+    GameState.distribute_cards()
+
+    draw_screen()
+    draw_cards(images)
+
+    while running:
+        print(GameState.choose_card)
+        if GameState.choose_card == True:
+            draw_color_choosing_screen()
+
+        if GameState.turn == 'comp':
+            pygame.time.delay(1000)
+            GameState.play_comp_move()
+            draw_screen()
+            draw_cards(images)
+
+        for event in pygame.event.get():
+
+            if event.type == pygame.QUIT:
+                running = False
+
+            if event.type == pygame.MOUSEBUTTONDOWN and GameState.turn == 'player':
+                x, y = pygame.mouse.get_pos()
+
+                index = (x - 100) // 100
+                if 0 <= index < len(GameState.player_hand):
+                    selected_card = GameState.player_hand[index]
+                    GameState.play_card(selected_card)
+                    draw_screen()
+                    draw_cards(images)
+                    
+
+
+main()
