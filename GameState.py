@@ -59,7 +59,7 @@ class GameState:
 
 
     def valid_move(self, card):
-        if card not in ['black_+4', 'black_wildcard'] and self.pile[-1] not in ['black_+4', 'black_wildcard']:
+        if card not in ['black_+4', 'black_wildcard']:
             splitted_card = card.split("_")
             splitted_pile_card = self.pile[-1].split("_")
 
@@ -70,11 +70,14 @@ class GameState:
     
 
     def play_comp_move(self):
+        print(self.comp_hand)
+        print(self.pile[-1])
+
         for card in self.comp_hand:
             if self.valid_move(card):
                 self.play_card(card)
                 return True
-            
+        
         self.take_card()
         self.turn = 'player' if self.turn == 'comp' else 'comp'
         
