@@ -253,8 +253,6 @@ def main():
                         draw_screen()
                         draw_cards(images)
 
-                pygame.time.delay(1000)
-
         pygame.display.flip()
 
 # Start the game
