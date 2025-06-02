@@ -1,4 +1,5 @@
 import random
+import pygame
 
 class GameState:
     def __init__(self):
@@ -73,6 +74,8 @@ class GameState:
                 if '+4' in card:
                     self.pending_effect = {'type': '+4', 'target': self.opponent()}
                     print(f"Effect +4 activated on {self.pending_effect['target']}")
+                else:
+                    self.turn = self.opponent()
 
                 self.choose_card = True
                 return True
@@ -189,3 +192,4 @@ class GameState:
         self.draw_card("comp")
         self.turn = self.opponent()
         print(f"Turn after computer: {self.turn}")
+    
